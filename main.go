@@ -45,7 +45,10 @@ func ParseIP(ipStr string) IP {
 		apiUrl = fmt.Sprintf("https://%s.seeip.org/geoip/", ipStr)
 	}
 
-	resp, _ := http.Get(apiUrl)
+	resp, err := http.Get(apiUrl)
+	if err != nil {
+		return IP{Ip: "not available"}
+	}
 	data := IP{Ip: ipStr}
 	_ = json.NewDecoder(resp.Body).Decode(&data)
 	data.Str = fmt.Sprintf("%s - %s - %s", data.Ip, data.Organization, strings.Join([]string{data.City, data.Region, data.Country}, ", "))
